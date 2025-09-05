@@ -10,7 +10,7 @@ public class Post
 
     // Navigation
     [ForeignKey("User")]
-    public int UserId { get; set; }
+    public required string UserId { get; set; }
     public virtual User User { get; set; } = null!;
 
     public virtual ICollection<Like> Likes { get; set; } = [];

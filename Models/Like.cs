@@ -8,7 +8,7 @@ public class Like
 
     // Navigation
     [ForeignKey("User")]
-    public int UserId { get; set; }
+    public required string UserId { get; set; }
     public virtual User User { get; set; } = null!;
 
     [ForeignKey("Post")]

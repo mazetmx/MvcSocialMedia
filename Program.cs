@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MvcSocialMedia.Data;
 using MvcSocialMedia.Models;
@@ -7,30 +8,29 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<MvcSocialMediaContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("MvcSocialMedia")));
 
-// Add Identity services
 builder.Services.AddIdentityCore<User>(options =>
 {
+    options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = true;
     options.Password.RequireUppercase = true;
-    options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 6;
-
     options.User.RequireUniqueEmail = true;
+})
+.AddRoles<IdentityRole>()
+.AddEntityFrameworkStores<MvcSocialMediaContext>()
+.AddSignInManager()
+.AddDefaultTokenProviders();
 
-    options.SignIn.RequireConfirmedAccount = false;
-    options.SignIn.RequireConfirmedEmail = false;
-}).AddEntityFrameworkStores<MvcSocialMediaContext>();
-
-// Configure application cookie
-builder.Services.ConfigureApplicationCookie(options =>
+builder.Services.AddAuthentication(options =>
 {
-    options.LoginPath = "/Account/Login";
-    options.LogoutPath = "/Account/Logout";
-    options.AccessDeniedPath = "/Account/AccessDenied";
-    options.ExpireTimeSpan = TimeSpan.FromDays(30);
-    options.SlidingExpiration = true;
-});
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+})
+.AddIdentityCookies();
+
+builder.Services.AddAuthorization();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

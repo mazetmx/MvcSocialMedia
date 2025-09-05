@@ -8,10 +8,10 @@ public class Following
 
     // Navigation
     [ForeignKey("Follower")]
-    public int FollowerId { get; set; }
+    public required string FollowerId { get; set; }
     public virtual User Follower { get; set; } = null!;
 
     [ForeignKey("Followee")]
-    public int FolloweeId { get; set; }
+    public required string FolloweeId { get; set; }
     public virtual User Followee { get; set; } = null!;
 }

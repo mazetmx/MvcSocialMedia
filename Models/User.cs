@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MvcSocialMedia.Models;
 
-public class User : IdentityUser<int>
+public class User : IdentityUser
 {
     [StringLength(50)]
     public required string FirstName { get; set; } = string.Empty;

@@ -1,16 +1,11 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MvcSocialMedia.Models;
 
 namespace MvcSocialMedia.Data;
 
-public class MvcSocialMediaContext : DbContext
+public class MvcSocialMediaContext(DbContextOptions<MvcSocialMediaContext> options) : IdentityDbContext<User>(options)
 {
-    public MvcSocialMediaContext (DbContextOptions<MvcSocialMediaContext> options)
-        : base(options)
-    {
-    }
-
-    public DbSet<User> Users { get; set; }
     public DbSet<Post> Posts { get; set; }
     public DbSet<Like> Likes { get; set; }
     public DbSet<Comment> Comments { get; set; }
