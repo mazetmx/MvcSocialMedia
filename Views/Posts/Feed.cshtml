@@ -1,0 +1,45 @@
+@model List<MvcSocialMedia.Models.ViewModels.Post.PostViewModel>
+
+@{
+    ViewData["Title"] = "Feed";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h2>Recent Posts</h2>
+
+        @foreach (var post in Model)
+        {
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">@post.UserFirstName</h5>
+                    <p class="card-text">@post.Content</p>
+
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <span class="text-muted">
+                                <i class="fas fa-heart"></i> @post.LikeCount likes
+                            </span>
+                            <span class="text-muted ms-3">
+                                <i class="fas fa-comment"></i> @post.CommentCount comments
+                            </span>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-heart"></i> Like
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="text-center">
+                <p>No posts yet. Be the first to post something!</p>
+                <a asp-action="Create" class="btn btn-primary">Create Post</a>
+            </div>
+        }
+    </div>
+</div>
