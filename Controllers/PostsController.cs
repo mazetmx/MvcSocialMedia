@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MvcSocialMedia.Data;
 using MvcSocialMedia.Models;
+using MvcSocialMedia.Models.ViewModels.Comment;
 using MvcSocialMedia.Models.ViewModels.Post;
 
 namespace MvcSocialMedia.Controllers;
@@ -48,7 +49,7 @@ public class PostsController(MvcSocialMediaContext context, UserManager<User> us
             .OrderByDescending(p => p.Id)
             .Include(p => p.User)
             .Include(p => p.Likes)
-            .Include(p => p.Comments)
+            .Include(p => p.Comments).ThenInclude(c => c.User)
             .Take(20)
             .ToListAsync();
 
@@ -62,7 +63,16 @@ public class PostsController(MvcSocialMediaContext context, UserManager<User> us
             UserFirstName = p.User.FirstName,
             LikeCount = p.Likes.Count,
             CommentCount = p.Comments.Count,
-            IsLikedByCurrentUser = p.Likes.Any(l => l.UserId == currentUserId)
+            IsLikedByCurrentUser = p.Likes.Any(l => l.UserId == currentUserId),
+            Comments = p.Comments
+                .Select(c => new CommentViewModel
+                {
+                    Id = c.Id,
+                    Content = c.Content,
+                    UserFirstName = c.User.FirstName,
+                    UserName = c.User.UserName!,
+                    PostId = c.PostId
+                }).ToList()
         }).ToList();
 
         return View(postViewModels);

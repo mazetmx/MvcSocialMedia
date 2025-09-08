@@ -10,25 +10,61 @@
 
         @foreach (var post in Model)
         {
-            <div class="card mb-3">
+            <div class="card mb-4">
                 <div class="card-body">
-                    <h5 class="card-title">@post.UserFirstName</h5>
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h5 class="card-title mb-0">@post.UserFirstName</h5>
+                            <small class="text-muted">@post.UserName</small>
+                        </div>
+                    </div>
+
                     <p class="card-text">@post.Content</p>
 
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <span class="text-muted">
-                                <i class="fas fa-heart"></i> @post.LikeCount likes
-                            </span>
-                            <span class="text-muted ms-3">
-                                <i class="fas fa-comment"></i> @post.CommentCount comments
-                            </span>
-                        </div>
-                        <div>
-                            <button class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-heart"></i> Like
+                    <div class="d-flex justify-content-between text-muted small mb-2">
+                        <span>@post.LikeCount likes</span>
+                        <span>@post.CommentCount comments</span>
+                    </div>
+
+                    <div class="d-flex border-top border-bottom py-2">
+                        <form asp-controller="Likes" asp-action="ToggleLike" method="post" class="me-2">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="postId" value="@post.Id" />
+                            <button type="submit" class="btn btn-sm @(post.IsLikedByCurrentUser ? "btn-primary" : "btn-outline-primary")">
+                                <i class="fas fa-heart"></i>
+                                @(post.IsLikedByCurrentUser ? "Liked" : "Like")
                             </button>
+                        </form>
+
+                        <button class="btn btn-sm btn-outline-secondary comment-toggle-btn"
+                                onclick="toggleComments(@post.Id)">
+                            <i class="fas fa-comment"></i> Comment
+                        </button>
+                    </div>
+
+                    <div id="comments-@post.Id" class="comments-section mt-3" style="display: none;">
+                        <div class="comments-list mb-3">
+                            @foreach (var comment in post.Comments)
+                            {
+                                <div class="comment-item mb-2 p-2 bg-light rounded">
+                                    <div class="d-flex justify-content-between">
+                                        <strong>@comment.UserFirstName</strong>
+                                    </div>
+                                    <p class="mb-0">@comment.Content</p>
+                                </div>
+                            }
                         </div>
+
+                        <form asp-controller="Comments" asp-action="Create" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="postId" value="@post.Id" />
+                            <div class="input-group">
+                                <input type="text" name="content" class="form-control"
+                                       placeholder="Write a comment..."
+                                       maxlength="500" required>
+                                <button type="submit" class="btn btn-primary">Post</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -43,3 +79,30 @@
         }
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function toggleComments(postId) {
+            const commentsSection = document.getElementById('comments-' + postId);
+            const button = event.target.closest('.comment-toggle-btn');
+
+            if (commentsSection.style.display === 'none') {
+                commentsSection.style.display = 'block';
+                button.innerHTML = '<i class="fas fa-comment"></i> Hide Comments';
+            } else {
+                commentsSection.style.display = 'none';
+                button.innerHTML = '<i class="fas fa-comment"></i> Comment';
+            }
+        }
+    </script>
+
+    <style>
+        .comment-item {
+            border-left: 3px solid #0d6efd;
+        }
+
+        .comments-section {
+            transition: all 0.3s ease;
+        }
+    </style>
+}

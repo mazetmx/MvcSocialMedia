@@ -1,3 +1,5 @@
+using MvcSocialMedia.Models.ViewModels.Comment;
+
 namespace MvcSocialMedia.Models.ViewModels.Post;
 
 public class PostViewModel
@@ -9,4 +11,5 @@ public class PostViewModel
     public int LikeCount { get; set; }
     public int CommentCount { get; set; }
     public bool IsLikedByCurrentUser { get; set; }
+    public List<CommentViewModel> Comments { get; set; } = [];
 }
